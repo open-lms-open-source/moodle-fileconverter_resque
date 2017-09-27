@@ -28,73 +28,12 @@ use \core_files\conversion;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once('fixtures/resque_testcase.php');
 require_once('fixtures/mock_resque_worker.php');
 require_once('fixtures/testable_converter.php');
 
-class fileconverter_resque_converter_testcase extends advanced_testcase {
-    protected $worker = null;
+class fileconverter_resque_converter_testcase extends resque_testcase {
 
-    protected $testfilecounter = 0;
-
-    protected $generator = null;
-
-    public function setUp() {
-        global $CFG;
-
-        if (empty($CFG->phpunit_fileconverter_resque_server)) {
-            if (empty($CFG->phpunit_local_file_convert_resque_server)) {
-                return $this->markTestSkipped('Resque conversion test skipped. '.'
-                        $CFG->phpunit_fileconverter_resque_server must be set.');
-            }
-
-            $CFG->phpunit_fileconverter_resque_server = $CFG->phpunit_local_file_convert_resque_server;
-        }
-
-        if (isset($CFG->phpunit_fileconverter_resque_unoconv_path)) {
-            set_config('pathtounoconv', $CFG->phpunit_fileconverter_resque_unoconv_path, 'fileconverter_resque');
-        }
-
-        $path = get_config('fileconverter_resque', 'pathtounoconv');
-        if (empty($path) || !file_exists($path) || !\file_is_executable($path)) {
-            return $this->markTestSkipped('Resque conversion test skipped. Path to unoconv is not valid. '.
-                    'Update $CFG->phpunit_fileconverter_resque_unoconv_path.');
-        }
-
-        set_config('resqueserver', $CFG->phpunit_fileconverter_resque_server, 'fileconverter_resque');
-        set_config('queuebatch', 'unoconv_batch', 'fileconverter_resque');
-        set_config('queuehigh', 'unoconv', 'fileconverter_resque');
-
-        if (is_null($this->worker)) {
-            $this->worker = new fileconverter_resque_mock_resque_worker();
-        }
-
-        $this->worker->clear_jobs();
-
-        $this->resetAfterTest();
-
-        $this->generator = self::getDataGenerator()->get_plugin_generator('core_search');
-
-        parent::setUp();
-    }
-
-    protected function create_test_conversion($target = 'rtf', $save = true, $source = 'txt') {
-        $counter = $this->testfilecounter;
-        $options = new stdClass();
-        $options->content = "File contents ".$counter;
-        $options->filename = "testfile{$counter}.{$source}";
-        $storedfile = $this->generator->create_file($options);
-        $conversion = new \core_files\conversion(0, (object) [
-            'targetformat' => $target,
-        ]);
-        $conversion->set_sourcefile($storedfile);
-        if ($save) {
-            $conversion->create();
-        }
-
-        $this->testfilecounter++;
-
-        return $conversion;
-    }
 
     public function test_start_document_conversion() {
         $converter = new fileconverter_resque_testable_converter();
@@ -224,16 +163,13 @@ class fileconverter_resque_converter_testcase extends advanced_testcase {
         $this->assertEquals(0, $data->attempt);
         $this->assertEquals(1, $data->priority);
 
-        // No just check debugging for missing values.
-        $this->assertDebuggingNotCalled();
+        // Just that no errors happen in this state.
         unset($data->priority);
         unset($data->attempt);
         unset($data->status);
         $conversion->set('data', $data);
 
         $converter->poll_conversion_status($conversion);
-
-        $this->assertDebuggingCalled();
     }
 
     public function test_check_conversion_is_timed_out() {
@@ -286,33 +222,10 @@ class fileconverter_resque_converter_testcase extends advanced_testcase {
 
         $this->assertTrue($converter->check_conversion_is_timed_out($conversion));
 
-        // Make sure there were no debugging calls so far.
-        $this->assertDebuggingNotCalled();
-
-        // Now we want to check that debugging is called when needed.
+        // Just that no errors happen in this state.
         unset($data->status);
         $conversion->set('data', $data);
         $this->assertFalse($converter->check_conversion_is_timed_out($conversion));
-        $this->assertDebuggingCalled();
-    }
-
-    public function test_check_unoconv_path() {
-        // Try the existing setting, which is hopefully working.
-        $converter = new fileconverter_resque_testable_converter();
-        $this->assertTrue($converter->check_unoconv_path());
-
-        // Try some various things that should for sure not work.
-        $converter->set_config('pathtounoconv', null);
-        $this->assertFalse($converter->check_unoconv_path());
-
-        $converter->set_config('pathtounoconv', '/path/to/not/existant/file');
-        $this->assertFalse($converter->check_unoconv_path());
-
-        $converter->set_config('pathtounoconv', __DIR__);
-        $this->assertFalse($converter->check_unoconv_path());
-
-        $converter->set_config('pathtounoconv', __FILE__);
-        $this->assertFalse($converter->check_unoconv_path());
     }
 
     public function test_are_requirements_met() {
@@ -352,130 +265,6 @@ class fileconverter_resque_converter_testcase extends advanced_testcase {
         $supported = $converter->get_supported_conversions();
         $this->assertInternalType('string', $supported);
         $this->assertEquals('a, b, c', $supported);
-    }
-
-    public function test_run_unoconv_conversion() {
-        set_config('retries', 0, 'fileconverter_resque');
-
-        $path = get_config('fileconverter_resque', 'pathtounoconv');
-        unset_config('pathtounoconv', 'fileconverter_resque');
-
-        $converter = new fileconverter_resque_testable_converter();
-        $conversion = $this->create_test_conversion();
-
-        $this->assertFalse($converter->run_unoconv_conversion($conversion));
-
-        $this->assertEquals(conversion::STATUS_FAILED, $conversion->get('status'));
-        $this->assertEquals('Unoconv not available on this system', $conversion->get('statusmessage'));
-
-        // Put the setting back.
-        set_config('pathtounoconv', $path, 'fileconverter_resque');
-        $converter->set_config('pathtounoconv', $path);
-
-        // Make sure that if we try to run a completed conversion, nothing happens.
-        $conversion = $this->create_test_conversion();
-        $conversion->set('status', conversion::STATUS_COMPLETE);
-
-        $this->assertTrue($converter->run_unoconv_conversion($conversion));
-
-        // There shouldn't be a complete file.
-        $file = $conversion->get_destfile();
-        $this->assertFalse($file);
-
-        // Now we test a source file type that is not supported.
-        $conversion = $this->create_test_conversion('rtf', true, 'testformat');
-        $this->assertFalse($converter->run_unoconv_conversion($conversion));
-
-        $this->assertEquals(conversion::STATUS_FAILED, $conversion->get('status'));
-        $this->assertEquals('File format not supported', $conversion->get('statusmessage'));
-
-        // Now we test a destincation file type that is not supported.
-        $conversion = $this->create_test_conversion('testformat');
-        $this->assertFalse($converter->run_unoconv_conversion($conversion));
-
-        $this->assertEquals(conversion::STATUS_FAILED, $conversion->get('status'));
-        $this->assertEquals('File format not supported', $conversion->get('statusmessage'));
-
-        // Now start a normal conversion.
-        $conversion = $this->create_test_conversion();
-        $this->assertTrue($converter->run_unoconv_conversion($conversion));
-
-        $this->assertEquals(conversion::STATUS_COMPLETE, $conversion->get('status'));
-    }
-
-    public function test_update_supported_formats() {
-        $this->assertFalse(get_config('fileconverter_resque', 'fileformats'));
-
-        $converter = new fileconverter_resque_testable_converter();
-        $converter->update_supported_formats();
-
-        $formatconfig = get_config('fileconverter_resque', 'fileformats');
-        $this->assertNotEmpty($formatconfig);
-
-        // Decode the stored value.
-        $formats = json_decode($formatconfig);
-        $formatcount = count($formats);
-        $this->assertInternalType('array', $formats);
-
-        // Now make sure it gets overwritten.
-        set_config('fileformats', json_encode(['a']), 'fileconverter_resque');
-        $converter->update_supported_formats();
-
-        // Make sure the count it updated.
-        $formatconfig = get_config('fileconverter_resque', 'fileformats');
-        $this->assertNotEmpty($formatconfig);
-        $formats = json_decode($formatconfig);
-        $this->assertCount($formatcount, $formats);
-    }
-
-    public function test_get_supported_formats() {
-        $converter = new fileconverter_resque_testable_converter();
-
-        // First, get the default set.
-        $formatsdefault = $converter->get_supported_formats();
-
-        $this->assertNotEmpty($formatsdefault);
-        // Test some things we know should be in the default set.
-        $this->assertContains('xml', $formatsdefault);
-        $this->assertContains('doc', $formatsdefault);
-        $this->assertContains('jpg', $formatsdefault);
-
-        // Now a little trick to make sure we get the cached one if we ask again.
-        $converter->set_config('fileformats', json_encode(['a', 'b', 'c']));
-        $formats = $converter->get_supported_formats();
-
-        $this->assertSame($formatsdefault, $formats);
-        $this->assertContains('xml', $formats);
-        $this->assertContains('doc', $formats);
-        $this->assertContains('jpg', $formats);
-        $this->assertNotContains('a', $formats);
-        $this->assertNotContains('b', $formats);
-        $this->assertNotContains('c', $formats);
-
-        // Now we need a new converter. Going to make sure we can get it from settings as well.
-        set_config('fileformats', json_encode(['a', 'b', 'c']), 'fileconverter_resque');
-        $converter = new fileconverter_resque_testable_converter();
-        $formats = $converter->get_supported_formats();
-        $this->assertCount(3, $formats);
-        $this->assertContains('a', $formats);
-        $this->assertContains('b', $formats);
-        $this->assertContains('c', $formats);
-
-        // And now going the same thing with some bad JSONs. Should give default values.
-        set_config('fileformats', json_encode([]), 'fileconverter_resque');
-        $converter = new fileconverter_resque_testable_converter();
-        $formats = $converter->get_supported_formats();
-        $this->assertSame($formatsdefault, $formats);
-
-        set_config('fileformats', '[}', 'fileconverter_resque');
-        $converter = new fileconverter_resque_testable_converter();
-        $formats = $converter->get_supported_formats();
-        $this->assertSame($formatsdefault, $formats);
-
-        set_config('fileformats', null, 'fileconverter_resque');
-        $converter = new fileconverter_resque_testable_converter();
-        $formats = $converter->get_supported_formats();
-        $this->assertSame($formatsdefault, $formats);
     }
 
     public function test_get_message_arguments() {

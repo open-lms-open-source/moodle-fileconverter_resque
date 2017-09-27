@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A testable converter object to expose hidden things.
+ * A testable unoconv object to expose hidden things.
  *
  * @package   local_file_convert
  * @copyright Copyright (c) 2016 Blackboard Inc.
@@ -24,49 +24,29 @@
  */
 
 use \fileconverter_resque\converter;
+use \fileconverter_resque\unoconv;
 use \core_files\conversion;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('testable_unoconv.php');
-
 /**
- * A testable converter object to expose hidden things.
+ * A testable unoconv object to expose hidden things.
  *
  * @package    local_file_convert
  * @copyright  Copyright (c) 2016 Blackboard Inc.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class fileconverter_resque_testable_converter extends converter {
-
-    public $ishighpriority = true;
-
-    public $unoconv = null;
-
-    public function __construct() {
-        parent::__construct();
-
-        $this->unoconv = new fileconverter_resque_testable_unoconv($this->config, $this);
+class fileconverter_resque_testable_unoconv extends unoconv {
+    public function check_unoconv_path() {
+        return parent::check_unoconv_path();
     }
 
-    public function is_high_priority() {
-        return $this->ishighpriority;
+    public function get_supported_formats() {
+        return parent::get_supported_formats();
     }
 
-    public function get_config($key) {
-        if (isset($this->config->$key)) {
-            return $this->config->$key;
-        }
-
-        return null;
-    }
-
-    public function set_config($key, $value) {
-        $this->config->$key = $value;
-    }
-
-    public function get_message_arguments(conversion $conversion) {
-        return parent::get_message_arguments($conversion);
+    public function update_supported_formats() {
+        return parent::update_supported_formats();
     }
 }
 
