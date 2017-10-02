@@ -37,6 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class fileconverter_resque_testable_unoconv extends unoconv {
+    // @codingStandardsIgnoreStart
     public function check_unoconv_path() {
         return parent::check_unoconv_path();
     }
@@ -48,5 +49,6 @@ class fileconverter_resque_testable_unoconv extends unoconv {
     public function update_supported_formats() {
         return parent::update_supported_formats();
     }
+    // @codingStandardsIgnoreEnd
 }
 

@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// This file isn't apart of Moodle, so it fails in weird ways.
+// @codingStandardsIgnoreFile
+
 /**
  * Class that implements a Resque_JobInterface for execution.
  *

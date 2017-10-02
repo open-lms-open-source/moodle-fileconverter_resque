@@ -23,6 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// This file isn't apart of Moodle, so it fails in weird ways.
+// @codingStandardsIgnoreFile
+
 // Don't let this be called by a web process.
 if (isset($_SERVER['REMOTE_ADDR'])) {
     echo('Command line scripts can not be executed from the web interface');
@@ -66,16 +69,16 @@ Options:
 
 // Use the autoloader option.
 if (empty($options['a'])) {
-    require_once dirname(dirname(__FILE__)).'/vendor/autoload.php';
+    require_once(dirname(dirname(__FILE__)).'/vendor/autoload.php');
 } else {
     // Check that the autoloader file exists.
     if (!is_readable($options['a'])) {
         echo "Fatal error: Invalid class autoloader path \"".$options['a']."\".\n";
         exit(1);
     }
-    require_once $options['a'];
+    require_once($options['a']);
 }
-require_once 'unoconv_job.php';
+require_once('unoconv_job.php');
 
 // Get the first and second queues.
 $queues = array();

@@ -23,7 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// use \local_file_convert\manager;
 use \core_files\conversion;
 use \fileconverter_resque\converter;
 

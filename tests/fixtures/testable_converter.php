@@ -65,8 +65,10 @@ class fileconverter_resque_testable_converter extends converter {
         $this->config->$key = $value;
     }
 
+    // @codingStandardsIgnoreStart
     public function get_message_arguments(conversion $conversion) {
         return parent::get_message_arguments($conversion);
     }
+    // @codingStandardsIgnoreEnd
 }
 
