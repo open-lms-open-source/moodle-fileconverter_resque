@@ -282,6 +282,9 @@ class converter implements \core_files\converter_interface {
         $converter = new self();
         $formats = $converter->unoconv->get_supported_formats();
 
+        $from = strtolower($from);
+        $to = strtolower($to);
+
         // It's assumed that unoconv supports all to->from combos for supported file extensions.
         if (in_array($from, $formats) && in_array($to, $formats)) {
             return true;
@@ -299,13 +302,14 @@ class converter implements \core_files\converter_interface {
      *
      * @param conversion $conversion
      * @param string     $failmessage The message to set on the conversion when failed.
+     * @param bool       $forcefail   Fail the conversion, even if there are more attempts allowed.
      */
-    public function fail_or_resubmit(conversion $conversion, $failmessage = '') {
+    public function fail_or_resubmit(conversion $conversion, $failmessage = '', $forcefail = false) {
         $data = $conversion->get('data');
 
         $this->debug_info('Failure: '.$failmessage);
 
-        if (isset($data->attempt) && $data->attempt < $this->config->retries) {
+        if (!$forcefail && isset($data->attempt) && $data->attempt < $this->config->retries) {
             $this->start_document_conversion($conversion);
             $this->debug_info('Resubmitting');
         } else {

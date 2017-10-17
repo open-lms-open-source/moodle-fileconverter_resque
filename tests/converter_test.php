@@ -256,6 +256,12 @@ class fileconverter_resque_converter_testcase extends resque_testcase {
         $this->assertFalse(converter::supports('d', 'a'));
         $this->assertFalse(converter::supports('b', 'd'));
         $this->assertFalse(converter::supports('d', 'e'));
+
+        // Make sure capitals work as expected.
+        $this->assertTrue(converter::supports('A', 'a'));
+        $this->assertTrue(converter::supports('a', 'C'));
+        $this->assertTrue(converter::supports('B', 'a'));
+        $this->assertTrue(converter::supports('B', 'C'));
     }
 
     public function test_get_supported_conversions() {

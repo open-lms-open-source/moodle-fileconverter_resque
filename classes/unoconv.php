@@ -103,12 +103,18 @@ class unoconv {
             }
 
             $file = $conversion->get_sourcefile();
+            if (empty($file)) {
+                // This is most likely to happen when the source was modified before conversion, so the file is missing.
+                $this->converter->fail_or_resubmit($conversion, 'Source file not found', true);
+                return false;
+            }
 
             // Sanity check that the conversion is supported.
             $fromformat = pathinfo($file->get_filename(), PATHINFO_EXTENSION);
             $format = $conversion->get('targetformat');
             if (!converter::supports($fromformat, $format)) {
-                $this->converter->fail_or_resubmit($conversion, 'File format not supported');
+                // We know this won't self correct, so we should just fail now.
+                $this->converter->fail_or_resubmit($conversion, 'File format not supported', true);
                 return false;
             }
 
@@ -349,6 +355,8 @@ class unoconv {
 
         $formats = $matches[1];
         $formats = array_values(array_unique($formats));
+
+        $formats = array_map('strtolower', $formats);
 
         if (empty($formats)) {
             return;
