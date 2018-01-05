@@ -27,12 +27,11 @@ namespace fileconverter_resque;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+
 require_once($CFG->libdir . '/filelib.php');
 
-use stored_file;
 use \core_files\conversion;
-
-require_once(__DIR__.'/../vendor/autoload.php');
 
 /**
  * Class for interfacing with unoconv.
@@ -48,7 +47,7 @@ class unoconv {
     /** @var converter Reference to the parent converter. */
     protected $converter = null;
 
-    /** @var Array of supported formats. */
+    /** @var array of supported formats. */
     protected $formats = null;
 
     /**
@@ -216,7 +215,7 @@ class unoconv {
      * @param string $cmd  Fully escaped command string, with arguments.
      * @param int $timeout Number of seconds to allow the script to run before attempting to kill it.
      * @return array() Consists of 3 components in this order: exitcode, stdout, stderr.
-     * @throws moodle_exception
+     * @throws \moodle_exception
      */
     protected function run_command_timeout($cmd, $timeout) {
         // Setup the command.

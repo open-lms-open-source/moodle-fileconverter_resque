@@ -27,12 +27,11 @@ namespace fileconverter_resque;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+
 require_once($CFG->libdir . '/filelib.php');
 
-use stored_file;
 use \core_files\conversion;
-
-require_once(__DIR__.'/../vendor/autoload.php');
 
 /**
  * Class for converting files between different formats using unoconv over resque.
@@ -56,7 +55,7 @@ class converter implements \core_files\converter_interface {
     protected $config = null;
 
 
-    /** @var Debug prefix used for messages. */
+    /** @var string Debug prefix used for messages. */
     protected $debugprefix = null;
 
     protected $unoconv = null;
@@ -72,6 +71,8 @@ class converter implements \core_files\converter_interface {
     const STATUS_STARTED = 1;
 
     public function __construct() {
+        require_once(__DIR__.'/../vendor/autoload.php');
+
         $this->config = get_config('fileconverter_resque');
 
         if (!empty($this->config->resqueserver)) {

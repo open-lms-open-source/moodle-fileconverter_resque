@@ -23,12 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use \core_files\conversion;
-use \fileconverter_resque\converter;
-
 defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__.'/../../vendor/autoload.php');
 
 /**
  * Do stuff a Resque worker would.
@@ -39,12 +34,12 @@ require_once(__DIR__.'/../../vendor/autoload.php');
  */
 class fileconverter_resque_mock_resque_worker {
     /**
-     * @var Holds the worker for unoconv.
+     * @var Resque_Worker Holds the worker for unoconv.
      */
     static protected $mainworker = null;
 
     /**
-     * @var Holds the worker for unoconv_batch.
+     * @var Resque_Worker Holds the worker for unoconv_batch.
      */
     static protected $batchworker = null;
 
@@ -53,6 +48,7 @@ class fileconverter_resque_mock_resque_worker {
      */
     public function __construct() {
         if (is_null(self::$mainworker)) {
+            require_once(__DIR__.'/../../vendor/autoload.php');
             self::$mainworker = new Resque_Worker(array('unoconv'));
             self::$batchworker = new Resque_Worker(array('unoconv_batch'));
         }
@@ -74,7 +70,7 @@ class fileconverter_resque_mock_resque_worker {
      * Returns the lenght of the passed queue.
      *
      * @param string $queue The queue name.
-     * @return
+     * @return int
      */
     public function get_queue_length($queue) {
         return Resque::size($queue);
