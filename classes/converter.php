@@ -178,11 +178,13 @@ class converter implements \core_files\converter_interface {
 
         // Provides some additional information for large systems.
         $sitename = empty($this->config->sitename) ? 'undefined' : $this->config->sitename;
-        $args = array('site' => array($sitename),
-                      'name' => $sitename.'_unoconv',
-                      'path' => $path,
-                      'id'   => $conversion->get('id')
-                      );
+        $args = [
+            'site' => array($sitename),
+            'name' => $sitename.'_unoconv',
+            'path' => $path,
+            'id'   => $conversion->get('id'),
+            'verbose' => !empty($this->config->verbose),
+        ];
 
         return $args;
     }

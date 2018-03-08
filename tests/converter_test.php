@@ -290,8 +290,13 @@ class fileconverter_resque_converter_testcase extends resque_testcase {
         $converter->set_config('sitename', 'testsite');
         $results = $converter->get_message_arguments($conversion);
 
+        $this->assertEquals(false, $results['verbose']);
         $this->assertEquals($CFG->dirroot.'/files/converter/resque/cli/run_conversion.php', $results['path']);
         $this->assertEquals('testsite', $results['site'][0]);
+
+        $converter->set_config('verbose', true);
+        $results = $converter->get_message_arguments($conversion);
+        $this->assertEquals(true, $results['verbose']);
     }
 }
 
