@@ -56,5 +56,4 @@ $string['unoconvsettings'] = 'Unoconverter Settings';
 $string['unoconvsettings_help'] = 'Setting related to unoconverter and its usage.';
 $string['unoconvtimeout'] = 'Unoconv timeout';
 $string['unoconvtimeout_help'] = 'Timeout after the actual unoconv has started';
-
-
+$string['privacy:metadata'] = 'The Resque/Unoconv Converter plugin does not store any personal data.';
