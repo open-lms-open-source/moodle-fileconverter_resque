@@ -39,12 +39,12 @@ abstract class resque_testcase extends advanced_testcase {
 
     protected $generator = null;
 
-    public function setUp() {
+    public function setUp(): void {
         global $CFG;
 
         if (empty($CFG->phpunit_fileconverter_resque_server)) {
             if (empty($CFG->phpunit_local_file_convert_resque_server)) {
-                return $this->markTestSkipped('Resque conversion test skipped. '.'
+                $this->markTestSkipped('Resque conversion test skipped. '.'
                         $CFG->phpunit_fileconverter_resque_server must be set.');
             }
 
@@ -57,7 +57,7 @@ abstract class resque_testcase extends advanced_testcase {
 
         $path = get_config('fileconverter_resque', 'pathtounoconv');
         if (empty($path) || !file_exists($path) || !\file_is_executable($path)) {
-            return $this->markTestSkipped('Resque conversion test skipped. Path to unoconv is not valid. '.
+            $this->markTestSkipped('Resque conversion test skipped. Path to unoconv is not valid. '.
                     'Update $CFG->phpunit_fileconverter_resque_unoconv_path.');
         }
 
