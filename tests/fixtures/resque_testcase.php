@@ -18,7 +18,7 @@
  * A base testcase.
  *
  * @package   local_file_convert
- * @copyright Copyright (c) 2016 Blackboard Inc.
+ * @copyright Copyright (c) 2016 Open LMS
  * @author    Eric Merrill
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * A base testcase.
  *
  * @package    local_file_convert
- * @copyright  Copyright (c) 2016 Blackboard Inc.
+ * @copyright  Copyright (c) 2016 Open LMS
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class resque_testcase extends advanced_testcase {

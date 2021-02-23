@@ -18,7 +18,7 @@
  * Unoconv class.
  *
  * @package   fileconverter_resque
- * @copyright Copyright (c) 2017 Blackboard Inc.
+ * @copyright Copyright (c) 2017 Open LMS
  * @author    Eric Merrill
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,7 +37,7 @@ use \core_files\conversion;
  * Class for interfacing with unoconv.
  *
  * @package    fileconverter_resque
- * @copyright Copyright (c) 2017 Blackboard Inc.
+ * @copyright Copyright (c) 2017 Open LMS
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class unoconv {

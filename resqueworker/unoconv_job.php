@@ -21,7 +21,7 @@
  * Class that implements a Resque_JobInterface for execution.
  *
  * @package   fileconverter_resque
- * @copyright Copyright (c) 2016 Blackboard Inc.
+ * @copyright Copyright (c) 2016 Open LMS
  * @author    Eric Merrill
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
