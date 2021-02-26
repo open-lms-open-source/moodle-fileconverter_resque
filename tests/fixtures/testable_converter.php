@@ -18,7 +18,7 @@
  * A testable converter object to expose hidden things.
  *
  * @package   local_file_convert
- * @copyright Copyright (c) 2016 Blackboard Inc.
+ * @copyright Copyright (c) 2016 Open LMS
  * @author    Eric Merrill
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +34,7 @@ require_once('testable_unoconv.php');
  * A testable converter object to expose hidden things.
  *
  * @package    local_file_convert
- * @copyright  Copyright (c) 2016 Blackboard Inc.
+ * @copyright  Copyright (c) 2016 Open LMS
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class fileconverter_resque_testable_converter extends converter {

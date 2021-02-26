@@ -18,7 +18,7 @@
  * A testable unoconv object to expose hidden things.
  *
  * @package   local_file_convert
- * @copyright Copyright (c) 2016 Blackboard Inc.
+ * @copyright Copyright (c) 2016 Open LMS
  * @author    Eric Merrill
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * A testable unoconv object to expose hidden things.
  *
  * @package    local_file_convert
- * @copyright  Copyright (c) 2016 Blackboard Inc.
+ * @copyright  Copyright (c) 2016 Open LMS
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class fileconverter_resque_testable_unoconv extends unoconv {
