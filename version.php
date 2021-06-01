@@ -25,9 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017091900;
-$plugin->requires  = 2017050500; // Requires this Moodle version (3.3.0).
+$plugin->version   = 2021060100;
+$plugin->requires  = 2020110900; // Requires this Moodle version (3.3.0).
 $plugin->component = 'fileconverter_resque';
-$plugin->release   = '3.3 (Build: 2017091900)';
+$plugin->release   = '3.10.3';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->cron      = 0;
