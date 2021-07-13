@@ -269,7 +269,7 @@ class fileconverter_resque_converter_testcase extends resque_testcase {
 
         $converter = new fileconverter_resque_testable_converter();
         $supported = $converter->get_supported_conversions();
-        $this->assertInternalType('string', $supported);
+        $this->assertIsString($supported);
         $this->assertEquals('a, b, c', $supported);
     }
 

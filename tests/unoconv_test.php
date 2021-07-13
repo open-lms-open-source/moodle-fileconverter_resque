@@ -116,7 +116,7 @@ class fileconverter_resque_unoconv_testcase extends resque_testcase {
         // Decode the stored value.
         $formats = json_decode($formatconfig);
         $formatcount = count($formats);
-        $this->assertInternalType('array', $formats);
+        $this->assertIsArray($formats);
 
         // Now make sure it gets overwritten.
         set_config('fileformats', json_encode(['a']), 'fileconverter_resque');
