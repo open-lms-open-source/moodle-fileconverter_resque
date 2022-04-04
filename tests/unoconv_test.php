@@ -22,7 +22,7 @@
  * @author    Eric Merrill
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace fileconverter_resque;
 use \fileconverter_resque\converter;
 use \core_files\conversion;
 
@@ -32,10 +32,10 @@ require_once('fixtures/resque_testcase.php');
 require_once('fixtures/mock_resque_worker.php');
 require_once('fixtures/testable_converter.php');
 
-class fileconverter_resque_unoconv_testcase extends resque_testcase {
+class unoconv_test extends \resque_testcase {
     public function test_check_unoconv_path() {
         // Try the existing setting, which is hopefully working.
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $unoconv = $converter->unoconv;
         $this->assertTrue($unoconv->check_unoconv_path());
 
@@ -59,7 +59,7 @@ class fileconverter_resque_unoconv_testcase extends resque_testcase {
         $path = get_config('fileconverter_resque', 'pathtounoconv');
         unset_config('pathtounoconv', 'fileconverter_resque');
 
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $conversion = $this->create_test_conversion();
 
         $this->assertFalse($converter->run_unoconv_conversion($conversion));
@@ -105,7 +105,7 @@ class fileconverter_resque_unoconv_testcase extends resque_testcase {
     public function test_update_supported_formats() {
         $this->assertFalse(get_config('fileconverter_resque', 'fileformats'));
 
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $unoconv = $converter->unoconv;
 
         $unoconv->update_supported_formats();
@@ -130,7 +130,7 @@ class fileconverter_resque_unoconv_testcase extends resque_testcase {
     }
 
     public function test_get_supported_formats() {
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
 
         // First, get the default set.
         $formatsdefault = $converter->unoconv->get_supported_formats();
@@ -155,7 +155,7 @@ class fileconverter_resque_unoconv_testcase extends resque_testcase {
 
         // Now we need a new converter. Going to make sure we can get it from settings as well.
         set_config('fileformats', json_encode(['a', 'b', 'c']), 'fileconverter_resque');
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $formats = $converter->unoconv->get_supported_formats();
         $this->assertCount(3, $formats);
         $this->assertContains('a', $formats);
@@ -164,20 +164,19 @@ class fileconverter_resque_unoconv_testcase extends resque_testcase {
 
         // And now going the same thing with some bad JSONs. Should give default values.
         set_config('fileformats', json_encode([]), 'fileconverter_resque');
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $formats = $converter->unoconv->get_supported_formats();
         $this->assertSame($formatsdefault, $formats);
 
         set_config('fileformats', '[}', 'fileconverter_resque');
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $formats = $converter->unoconv->get_supported_formats();
         $this->assertSame($formatsdefault, $formats);
 
         set_config('fileformats', null, 'fileconverter_resque');
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $formats = $converter->unoconv->get_supported_formats();
         $this->assertSame($formatsdefault, $formats);
     }
 
 }
-
