@@ -22,7 +22,7 @@
  * @author    Eric Merrill
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace fileconverter_resque;
 use \fileconverter_resque\converter;
 use \core_files\conversion;
 
@@ -32,11 +32,11 @@ require_once('fixtures/resque_testcase.php');
 require_once('fixtures/mock_resque_worker.php');
 require_once('fixtures/testable_converter.php');
 
-class fileconverter_resque_converter_testcase extends resque_testcase {
+class converter_test extends \resque_testcase {
 
 
     public function test_start_document_conversion() {
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $conversion = $this->create_test_conversion('rtf', false);
 
         // Now attempt to submit the conversion.
@@ -87,7 +87,7 @@ class fileconverter_resque_converter_testcase extends resque_testcase {
     }
 
     public function test_poll_conversion_status() {
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $converter->ishighpriority = true;
         $conversion = $this->create_test_conversion();
         $converter->start_document_conversion($conversion);
@@ -173,7 +173,7 @@ class fileconverter_resque_converter_testcase extends resque_testcase {
     }
 
     public function test_check_conversion_is_timed_out() {
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $converter->ishighpriority = true;
         $conversion = $this->create_test_conversion();
         $converter->start_document_conversion($conversion);
@@ -181,7 +181,7 @@ class fileconverter_resque_converter_testcase extends resque_testcase {
         $data = $conversion->get('data');
 
         // Mark it as started first.
-        $data->status = fileconverter_resque_testable_converter::STATUS_STARTED;
+        $data->status = \fileconverter_resque_testable_converter::STATUS_STARTED;
         $conversion->set('data', $data);
 
         // First, check to make sure it passes as expected when no time has passed.
@@ -195,7 +195,7 @@ class fileconverter_resque_converter_testcase extends resque_testcase {
         $this->assertTrue($converter->check_conversion_is_timed_out($conversion));
 
         // Now we are going to reset a few things in data.
-        $data->status = fileconverter_resque_testable_converter::STATUS_WAITING;
+        $data->status = \fileconverter_resque_testable_converter::STATUS_WAITING;
         $data->statustime += $timeout;
         $conversion->set('data', $data);
 
@@ -267,7 +267,7 @@ class fileconverter_resque_converter_testcase extends resque_testcase {
     public function test_get_supported_conversions() {
         set_config('fileformats', json_encode(['a', 'b', 'c']), 'fileconverter_resque');
 
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $supported = $converter->get_supported_conversions();
         $this->assertIsString($supported);
         $this->assertEquals('a, b, c', $supported);
@@ -276,7 +276,7 @@ class fileconverter_resque_converter_testcase extends resque_testcase {
     public function test_get_message_arguments() {
         global $CFG;
 
-        $converter = new fileconverter_resque_testable_converter();
+        $converter = new \fileconverter_resque_testable_converter();
         $conversion = $this->create_test_conversion();
 
         $converter->set_config('messagepath', converter::PATH_RELATIVE);
@@ -299,4 +299,3 @@ class fileconverter_resque_converter_testcase extends resque_testcase {
         $this->assertEquals(true, $results['verbose']);
     }
 }
-

@@ -27,8 +27,6 @@ use \fileconverter_resque\converter;
 use \fileconverter_resque\unoconv;
 use \core_files\conversion;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * A testable unoconv object to expose hidden things.
  *

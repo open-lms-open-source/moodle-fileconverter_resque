@@ -24,8 +24,6 @@
 
 namespace fileconverter_resque\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for fileconverter_resque implementing null_provider.
  *
