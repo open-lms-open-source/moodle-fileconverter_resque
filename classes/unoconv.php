@@ -102,6 +102,10 @@ class unoconv {
             }
 
             $file = $conversion->get_sourcefile();
+            if (!empty($CFG->fileconverter_force_utf)) {
+                $file = $this->force_utf8_encoding($file);
+            }
+
             if (empty($file)) {
                 // This is most likely to happen when the source was modified before conversion, so the file is missing.
                 $this->converter->fail_or_resubmit($conversion, 'Source file not found', true);
@@ -396,5 +400,43 @@ class unoconv {
         $this->formats = $formats;
 
         return $formats;
+    }
+
+    /**
+     * Force file encoding to UTF-8.
+     *
+     * @param $file
+     * @return false|mixed
+     * @throws \file_exception
+     * @throws \stored_file_creation_exception
+     * @throws \dml_exception
+     */
+    protected function force_utf8_encoding($file = false) {
+        if (empty($file)) {
+            return false;
+        }
+
+        $newfile = false;
+        $content = $file->get_content();
+        if (!empty($content)) {
+            $fs = get_file_storage();
+            $enc = mb_detect_encoding($content, 'ASCII, JIS, UTF-8, EUCJP-WIN, EUC-JP, SJIS-WIN, SJIS');
+            $textcontent = mb_convert_encoding($content, 'UTF-8', $enc);
+
+            $filerecord = [
+                'contextid' => \context_system::instance()->id,
+                'component' => $file->get_component(),
+                'filearea' => $file->get_filearea(),
+                'itemid' => 0,
+                'filepath' => $file->get_filepath(),
+                'filename' => 'tempfile'
+            ];
+
+            $newfile = $fs->create_file_from_string($filerecord, $textcontent);
+        }
+        if (!empty($newfile)) {
+            $file->replace_file_with($newfile);
+        }
+        return $file;
     }
 }

@@ -14,6 +14,12 @@ There is an included worker in the resqueworker directory. This allows you to se
 See the README in that directory for more info.
 
 
+## CFG Optional configurations
+It is possible to force during the conversion of files their change of encoding to UTF-8:
+```php
+$CFG->fileconverter_force_utf = true;
+```
+
 ## Unit testing
 To use unit testing, you must set the Redis server address:
 ```php
