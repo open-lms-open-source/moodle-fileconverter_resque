@@ -71,6 +71,8 @@ class unoconv {
      * @return bool True if successful, false if not.
      */
     public function run_unoconv_conversion(conversion $conversion) {
+        global $CFG;
+
         // Doing a blanket catch to try and prevent any lost conversions due to unknown exceptions.
         try {
             if (!converter::are_requirements_met() || !$this->check_unoconv_path()) {
@@ -419,8 +421,9 @@ class unoconv {
         $newfile = false;
         $content = $file->get_content();
         if (!empty($content)) {
+            $formats = ['ASCII', 'JIS', 'UTF-8', 'EUCJP-WIN', 'EUC-JP', 'SJIS-WIN', 'SJIS'];
             $fs = get_file_storage();
-            $enc = mb_detect_encoding($content, 'ASCII, JIS, UTF-8, EUCJP-WIN, EUC-JP, SJIS-WIN, SJIS');
+            $enc = mb_detect_encoding($content, $formats);
             $textcontent = mb_convert_encoding($content, 'UTF-8', $enc);
 
             $filerecord = [
@@ -429,7 +432,7 @@ class unoconv {
                 'filearea' => $file->get_filearea(),
                 'itemid' => 0,
                 'filepath' => $file->get_filepath(),
-                'filename' => 'tempfile'
+                'filename' => (string) time()
             ];
 
             $newfile = $fs->create_file_from_string($filerecord, $textcontent);
