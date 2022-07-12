@@ -104,7 +104,7 @@ class unoconv {
             }
 
             $file = $conversion->get_sourcefile();
-            if (!empty($CFG->fileconverter_force_utf)) {
+            if (!empty($CFG->fileconverter_force_utf) && $file->get_mimetype() == 'text/plain') {
                 $file = $this->force_utf8_encoding($file);
             }
 
