@@ -23,9 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use \fileconverter_resque\converter;
-use \fileconverter_resque\unoconv;
-use \core_files\conversion;
+use fileconverter_resque\converter;
+use fileconverter_resque\unoconv;
+use core_files\conversion;
 
 /**
  * A testable unoconv object to expose hidden things.

@@ -31,7 +31,7 @@ global $CFG;
 
 require_once($CFG->libdir . '/filelib.php');
 
-use \core_files\conversion;
+use core_files\conversion;
 
 /**
  * Class for interfacing with unoconv.
