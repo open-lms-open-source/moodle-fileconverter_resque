@@ -31,7 +31,7 @@ global $CFG;
 
 require_once($CFG->libdir . '/filelib.php');
 
-use \core_files\conversion;
+use core_files\conversion;
 
 /**
  * Class for interfacing with unoconv.
@@ -432,7 +432,7 @@ class unoconv {
                 'filearea' => $file->get_filearea(),
                 'itemid' => 0,
                 'filepath' => $file->get_filepath(),
-                'filename' => (string) time()
+                'filename' => (string) time(),
             ];
 
             $newfile = $fs->create_file_from_string($filerecord, $textcontent);
