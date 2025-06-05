@@ -221,7 +221,7 @@ class unoconv {
      * @param string $cmd  Fully escaped command string, with arguments.
      * @param int $timeout Number of seconds to allow the script to run before attempting to kill it.
      * @return array() Consists of 3 components in this order: exitcode, stdout, stderr.
-     * @throws \moodle_exception
+     * @throws \core\exception\moodle_exception
      */
     protected function run_command_timeout($cmd, $timeout) {
         // Setup the command.
@@ -263,7 +263,7 @@ class unoconv {
             if ($runtime > ($timeout + 30)) {
                 // If we've gotten this far, we don't know how to kill the child process. Throw hands in the air.
                 $this->converter->debug_info('Unable to kill unoconv. Throwing exception.');
-                throw new \moodle_exception('Could not kill conversion with PID '.$status['pid']);
+                throw new \core\exception\moodle_exception('Could not kill conversion with PID '.$status['pid']);
             }
         } while (true);
 
